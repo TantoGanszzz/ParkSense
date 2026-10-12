@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#07111f">
+  <meta name="description" content="ParkSense - Smart Parking IoT Dashboard Monitoring untuk Kelas XII SIJA SMK Telkom Sidoarjo dengan pemantauan 3 slot parkir secara presisi.">
+  <title>ParkSense | IoT Smart Parking Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- SIDEBAR NAVIGATION -->
+  <aside class="sidebar">
+    <a href="#" class="brand" aria-label="ParkSense Beranda">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-copy">
+        <strong>ParkSense</strong>
+        <small>IoT Monitoring · XII SIJA</small>
+      </span>
+    </a>
+
+    <div class="nav-label">MENU UTAMA</div>
+    <nav class="navigation">
+      <button class="nav-link active" data-page="dashboard" id="nav-dashboard">
+        <span class="nav-icon">⌂</span><span>Beranda</span>
+      </button>
+      <button class="nav-link" data-page="parking" id="nav-parking">
+        <span class="nav-icon">▦</span><span>Parking Lot (3 Slot)</span>
+      </button>
+      <button class="nav-link" data-page="history" id="nav-history">
+        <span class="nav-icon">◷</span><span>Riwayat Parkir</span>
+      </button>
+      <button class="nav-link" data-page="settings" id="nav-settings">
+        <span class="nav-icon">⚙</span><span>Pengaturan</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <div class="connection-card">
+        <div class="connection-title">
+          <span class="dot amber"></span>
+          <strong id="connectionText">Mode Demo</strong>
+        </div>
+        <p>ESP32: Belum Terhubung</p>
+        <small id="clock">Memuat waktu...</small>
+      </div>
+      <p class="sidebar-footer">PARKSENSE · SMK TELKOM SIDOARJO</p>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT AREA -->
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">SMK TELKOM SIDOARJO · KELAS XII SIJA</p>
+        <h1 id="pageTitle">Beranda</h1>
+        <p class="muted">Sistem Monitoring Cerdas 3 Slot Parkir Berbasis IoT</p>
+      </div>
+      <div class="system-status">
+        <span class="dot amber"></span>
+        <span id="systemStatusLabel">Mode Demo · Belum Terhubung</span>
+      </div>
+    </header>
+
+    <!-- 1. BERANDA (DASHBOARD OVERVIEW) -->
+    <section class="page" id="dashboard">
+      <div class="welcome-banner">
+        <div class="welcome-content">
+          <span class="welcome-tag">SMART PARKING SYSTEM · PROYEK XII SIJA</span>
+          <h2>ParkSense IoT Dashboard</h2>
+          <p>Monitoring ketersediaan 3 slot parkir (Slot 01, Slot 02, Slot 03) secara real-time dengan sensor ultrasonik HC-SR04 dan indikator LED.</p>
+        </div>
+        <div class="welcome-badge">
+          <span class="badge-icon">3</span>
+          <span class="badge-text">SLOT PARKIR</span>
+        </div>
+      </div>
+
+      <div class="section-heading">
+        <div>
+          <h2>Ringkasan Statistik</h2>
+          <p class="muted">Kondisi terkini seluruh slot parkir (3 slot terdaftar).</p>
+        </div>
+        <span class="live-label"><span class="dot amber"></span> Mode Demo</span>
+      </div>
+
+      <!-- 5 KARTU STATISTIK WAJIB -->
+      <div class="stats stats-five">
+        <article class="stat-card">
+          <div class="stat-icon blue">▦</div>
+          <div class="stat-info">
+            <p>Total Slot</p>
+            <h3 id="totalSlots">3</h3>
+            <small>Kapasitas terdaftar</small>
+          </div>
+        </article>
+        <article class="stat-card">
+          <div class="stat-icon green-bg">✓</div>
+          <div class="stat-info">
+            <p>Slot Kosong</p>
+            <h3 id="availableSlots">2</h3>
+            <small>Siap digunakan</small>
+          </div>
+        </article>
+        <article class="stat-card">
+          <div class="stat-icon red-bg">▣</div>
+          <div class="stat-info">
+            <p>Slot Terisi</p>
+            <h3 id="occupiedSlots">1</h3>
+            <small>Ditempati kendaraan</small>
+          </div>
+        </article>
+        <article class="stat-card">
+          <div class="stat-icon amber-bg">?</div>
+          <div class="stat-info">
+            <p>Tidak Diketahui</p>
+            <h3 id="unknownSlots">0</h3>
+            <small>Sensor offline/belum ada</small>
+          </div>
+        </article>
+        <article class="stat-card">
+          <div class="stat-icon cyan-bg">%</div>
+          <div class="stat-info">
+            <p>Persentase Okupansi</p>
+            <h3 id="occupancy">33.3%</h3>
+            <small>Rasio slot terpakai</small>
+          </div>
+        </article>
+      </div>
+
+      <!-- GRID OVERVIEW: DENAH & LED MONITORING -->
+      <div class="dashboard-grid">
+        <!-- DENAH PARKIR 3 SLOT RINGKAS -->
+        <article class="panel parking-panel">
+          <div class="panel-heading">
+            <div>
+              <h2>Denah Area Parkir (3 Slot)</h2>
+              <p class="muted">Slot 01, Slot 02, dan Slot 03. Klik slot untuk mengubah status simulasi.</p>
+            </div>
+            <button class="text-button" data-goto="parking">Kelola di Parking Lot ↗</button>
+          </div>
+
+          <div class="legend">
+            <span><i class="dot green"></i> Kosong (Tersedia)</span>
+            <span><i class="dot red"></i> Terisi</span>
+            <span><i class="dot amber"></i> Tidak Diketahui</span>
+          </div>
+
+          <div class="parking-grid-wrapper">
+            <div class="parking-grid" id="parkingGrid"></div>
+          </div>
+          <p class="note">Data saat ini menggunakan simulasi interaktif (Mode Demo), belum terhubung langsung ke sensor fisik ESP32.</p>
+        </article>
+
+        <!-- PANEL MONITORING 3 INDIKATOR LED -->
+        <article class="panel led-panel">
+          <div class="panel-heading">
+            <div>
+              <h2>Monitoring Indikator LED</h2>
+              <p class="muted">Indikator fisik per slot parkir</p>
+            </div>
+            <span class="led-count">3 Slot</span>
+          </div>
+
+          <div class="led-list" id="ledList"></div>
+
+          <div class="info-box">
+            <span class="info-symbol">i</span>
+            <p>Setiap slot dilengkapi lampu indikator (Hijau: Kosong, Merah: Terisi, Amber: Tidak Diketahui) untuk memandu pengendara di lokasi.</p>
+          </div>
+        </article>
+      </div>
+
+      <!-- TABEL AKTIVITAS TERBARU -->
+      <article class="panel history-preview">
+        <div class="panel-heading">
+          <div>
+            <h2>Aktivitas Terbaru</h2>
+            <p class="muted">Riwayat perubahan status 3 slot parkir terbaru.</p>
+          </div>
+          <button class="btn" data-goto="history">Lihat semua riwayat →</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Slot</th>
+                <th>Aktivitas</th>
+                <th>Waktu</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="recentHistory"></tbody>
+          </table>
+        </div>
+      </article>
+    </section>
+
+    <!-- 2. PARKING LOT (AREA PARKIR LENGKAP) -->
+    <section class="page hidden" id="parking">
+      <div class="section-heading">
+        <div>
+          <h2>Area Parkir Pintar (3 Slot)</h2>
+          <p class="muted">Kelola dan pantau status tepat 3 slot: Slot 01, Slot 02, dan Slot 03.</p>
+        </div>
+        <div class="heading-actions">
+          <button class="btn" id="resetParking">Reset ke Kondisi Awal</button>
+        </div>
+      </div>
+
+      <!-- 5 KARTU STATISTIK KONSISTEN DI PARKING LOT -->
+      <div class="stats stats-five compact-stats">
+        <article class="stat-card">
+          <div class="stat-icon blue">▦</div>
+          <div class="stat-info"><p>Total Slot</p><h3 id="parkingTotal">3</h3></div>
+        </article>
+        <article class="stat-card">
+          <div class="stat-icon green-bg">✓</div>
+          <div class="stat-info"><p>Kosong</p><h3 id="parkingAvailable">2</h3></div>
+        </article>
+        <article class="stat-card">
+          <div class="stat-icon red-bg">▣</div>
+          <div class="stat-info"><p>Terisi</p><h3 id="parkingOccupied">1</h3></div>
+        </article>
+        <article class="stat-card">
+          <div class="stat-icon amber-bg">?</div>
+          <div class="stat-info"><p>Tidak Diketahui</p><h3 id="parkingUnknown">0</h3></div>
+        </article>
+        <article class="stat-card">
+          <div class="stat-icon cyan-bg">%</div>
+          <div class="stat-info"><p>Okupansi</p><h3 id="parkingOccupancy">33.3%</h3></div>
+        </article>
+      </div>
+
+      <article class="panel">
+        <div class="panel-heading">
+          <div>
+            <h2>Denah Interaktif 3 Slot Parkir</h2>
+            <p class="muted">Klik slot untuk mengubah status berurutan (Kosong → Terisi → Tidak Diketahui → Kosong) atau gunakan tombol kontrol di bawah tiap slot.</p>
+          </div>
+          <span class="live-label"><span class="dot amber"></span> Mode Demo</span>
+        </div>
+        <div class="legend">
+          <span><i class="dot green"></i> Kosong (Tersedia)</span>
+          <span><i class="dot red"></i> Terisi (Ditempati)</span>
+          <span><i class="dot amber"></i> Status Tidak Diketahui</span>
+        </div>
+        
+        <div class="parking-grid-wrapper">
+          <div class="parking-grid large-grid" id="parkingGridFull"></div>
+        </div>
+
+        <div class="simulation-guide">
+          <div class="guide-title">
+            <span class="dot blue"></span>
+            <strong>Panduan Pengujian Simulasi:</strong>
+          </div>
+          <p class="guide-text">
+            Kamu dapat menguji seluruh skenario perhitungan okupansi dengan mengubah status 3 slot di atas:
+            <br>• <strong>2 Kosong, 1 Terisi</strong> = 33.3% &nbsp;|&nbsp; • <strong>1 Kosong, 2 Terisi</strong> = 66.7% &nbsp;|&nbsp; • <strong>3 Terisi</strong> = 100%
+            <br>• <strong>3 Kosong</strong> = 0% &nbsp;|&nbsp; • <strong>1 Kosong, 1 Terisi, 1 Unknown</strong> = 50.0% &nbsp;|&nbsp; • <strong>3 Unknown</strong> = — (N/A)
+          </p>
+        </div>
+      </article>
+    </section>
+
+    <!-- 3. RIWAYAT PARKIR -->
+    <section class="page hidden" id="history">
+      <div class="section-heading">
+        <div>
+          <h2>Riwayat Aktivitas Parkir</h2>
+          <p class="muted">Catatan keluar-masuk kendaraan hanya untuk Slot 01, Slot 02, dan Slot 03.</p>
+        </div>
+        <button class="btn danger-button" id="clearHistory">Hapus Riwayat</button>
+      </div>
+
+      <div class="stats compact-stats history-stats">
+        <article class="stat-card">
+          <div class="stat-icon blue">▤</div>
+          <div class="stat-info"><p>Total Catatan</p><h3 id="historyTotal">4</h3></div>
+        </article>
+        <article class="stat-card">
+          <div class="stat-icon green-bg">↙</div>
+          <div class="stat-info"><p>Kendaraan Masuk</p><h3 id="historyEntries">2</h3></div>
+        </article>
+        <article class="stat-card">
+          <div class="stat-icon red-bg">↗</div>
+          <div class="stat-info"><p>Kendaraan Keluar</p><h3 id="historyExits">2</h3></div>
+        </article>
+      </div>
+
+      <article class="panel">
+        <div class="panel-heading">
+          <div>
+            <h2>Log Aktivitas</h2>
+            <p class="muted">Cari nomor slot atau filter berdasarkan jenis aktivitas.</p>
+          </div>
+          <span class="badge-subtle">Data Simulasi</span>
+        </div>
+
+        <div class="filters">
+          <input id="searchHistory" type="text" placeholder="Cari nomor slot (contoh: 01, 02, 03)..." aria-label="Cari nomor slot">
+          <select id="filterHistory" aria-label="Filter aktivitas">
+            <option value="all">Semua aktivitas</option>
+            <option value="Masuk">Kendaraan masuk</option>
+            <option value="Keluar">Kendaraan keluar</option>
+            <option value="Tidak Diketahui">Tidak diketahui / Sensor update</option>
+          </select>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>No.</th>
+                <th>Nomor Slot</th>
+                <th>Aktivitas</th>
+                <th>Waktu</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="historyTable"></tbody>
+          </table>
+        </div>
+        <p id="historyCount" class="note"></p>
+      </article>
+    </section>
+
+    <!-- 4. PENGATURAN -->
+    <section class="page hidden" id="settings">
+      <div class="section-heading">
+        <div>
+          <h2>Pengaturan Sistem</h2>
+          <p class="muted">Atur preferensi dashboard dan pantau arsitektur integrasi perangkat.</p>
+        </div>
+      </div>
+
+      <div class="settings-grid">
+        <article class="panel">
+          <div class="panel-heading">
+            <div>
+              <h2>Preferensi Dashboard</h2>
+              <p class="muted">Pengaturan interaksi dan simulasi.</p>
+            </div>
+            <span class="settings-icon">⚙</span>
+          </div>
+
+          <label class="setting-row">
+            <span>
+              <strong>Notifikasi dashboard</strong>
+              <small>Tampilkan pesan toast saat status slot berubah.</small>
+            </span>
+            <input type="checkbox" id="notifications" checked>
+          </label>
+
+          <label class="setting-row">
+            <span>
+              <strong>Animasi indikator LED</strong>
+              <small>Aktifkan efek glow berkedip pada indikator LED.</small>
+            </span>
+            <input type="checkbox" id="ledAnimation" checked>
+          </label>
+
+          <label class="setting-row">
+            <span>
+              <strong>Interval pembaruan simulasi</strong>
+              <small>Penyegaran data dan verifikasi state otomatis.</small>
+            </span>
+            <select id="simInterval">
+              <option value="0">Manual saja</option>
+              <option value="10">10 detik</option>
+              <option value="30" selected>30 detik</option>
+            </select>
+          </label>
+
+          <button class="btn primary full-button" id="saveSettings">Simpan Pengaturan</button>
+          <p id="settingsMessage" class="note"></p>
+        </article>
+
+        <article class="panel">
+          <div class="panel-heading">
+            <div>
+              <h2>Informasi Perangkat & Rencana IoT</h2>
+              <p class="muted">Komponen sistem ParkSense (Proyek XII SIJA).</p>
+            </div>
+            <span class="settings-icon">⌘</span>
+          </div>
+
+          <div class="device-card">
+            <div class="device-symbol">ESP</div>
+            <div>
+              <strong>ESP32 Microcontroller</strong>
+              <p>Dual-Core IoT Controller (Rencana Integrasi)</p>
+            </div>
+            <span class="device-badge">Mode Demo</span>
+          </div>
+
+          <div class="device-row"><span>Jumlah Slot Dashboard</span><strong>3 Slot (Slot 01, 02, 03)</strong></div>
+          <div class="device-row"><span>Sensor Per Slot</span><strong>HC-SR04 Ultrasonik & LDR</strong></div>
+          <div class="device-row"><span>Indikator Visual</span><strong>3 Kelompok LED (R/G/Y)</strong></div>
+          <div class="device-row"><span>Gate / Palang Masuk</span><strong>2x Sensor IR & 1x Servo</strong></div>
+          <div class="device-row"><span>Display Informasi</span><strong>OLED 0.96" I2C</strong></div>
+          <div class="device-row"><span>Koneksi Hardware ESP32</span><strong class="warning-text">Belum Terhubung (Mode Demo)</strong></div>
+
+          <div class="info-box">
+            <span class="info-symbol">i</span>
+            <p>Koneksi perangkat keras ESP32 saat ini berstatus <strong>Belum Terhubung</strong>. Struktur kode dashboard telah dilengkapi adapter layer sehingga siap menerima data HTTP REST API atau WebSocket saat mikrokontroler telah diprogram.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+      <span><strong>ParkSense</strong> · Smart Parking IoT Monitoring System</span>
+      <span>Proyek Kelas XII SIJA · SMK Telkom Sidoarjo · 2026</span>
+    </footer>
+  </main>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
